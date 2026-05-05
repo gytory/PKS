@@ -29,30 +29,54 @@ FileManager::~FileManager() {
     }
     commandHistory.clear();
 }
-
 void FileManager::displayUI() {
     ConsoleManager* console = ConsoleManager::getInstance();
-    console->clearScreen();
     
-    console->setCursorPosition(0, 0);
-    std::cout << "┌─────────────────────────────────────────────────────────────────────────────┐";
-    console->setCursorPosition(0, 1);
-    std::cout << "│                    TWO-PANEL FILE MANAGER                                   │";
-    console->setCursorPosition(0, 2);
-    std::cout << "├─────────────────────────────────────────────────────────────────────────────┤";
+    // Статические элементы рисуем только если это первый запуск
+    static bool firstRun = true;
+    if (firstRun) {
+        console->clearScreen();
+        
+        console->setCursorPosition(0, 0);
+        std::cout << "┌─────────────────────────────────────────────────────────────────────────────┐";
+        console->setCursorPosition(0, 1);
+        std::cout << "│                    TWO-PANEL FILE MANAGER                                   │";
+        console->setCursorPosition(0, 2);
+        std::cout << "├─────────────────────────────────────────────────────────────────────────────┤";
+        
+        console->setCursorPosition(0, panelHeight + 4);
+        std::cout << "├─────────────────────────────────────────────────────────────────────────────┤";
+        console->setCursorPosition(0, panelHeight + 5);
+        std::cout << "│ [Tab] Switch panel | [C] Copy | [M] Move | [D] Delete | [Enter] Open | [Q] Quit │";
+        console->setCursorPosition(0, panelHeight + 6);
+        std::cout << "└─────────────────────────────────────────────────────────────────────────────┘";
+        
+        firstRun = false;
+    }
     
+    // Отрисовка обеих панелей
     leftPanel->display(activePanel == 0);
     rightPanel->display(activePanel == 1);
     
-    console->setCursorPosition(0, panelHeight + 4);
-    std::cout << "├─────────────────────────────────────────────────────────────────────────────┤";
-    console->setCursorPosition(0, panelHeight + 5);
-    std::cout << "│ [Tab] Switch panel | [C] Copy | [M] Move | [D] Delete | [Enter] Open | [Q] Quit │";
-    console->setCursorPosition(0, panelHeight + 6);
-    std::cout << "└─────────────────────────────────────────────────────────────────────────────┘";
-    
+    // Информация внизу
     console->setCursorPosition(0, panelHeight + 8);
-    std::cout << "Active: " << (activePanel == 0 ? "LEFT" : "RIGHT");
+    if (activePanel == 0) {
+        console->setColor(10);
+        std::cout << "Active: LEFT   ";
+        console->resetColor();
+    } else {
+        std::cout << "Active: LEFT   ";
+    }
+    
+    console->setCursorPosition(20, panelHeight + 8);
+    if (activePanel == 1) {
+        console->setColor(10);
+        std::cout << "RIGHT";
+        console->resetColor();
+    } else {
+        std::cout << "RIGHT";
+    }
+    
     console->setCursorPosition(0, panelHeight + 9);
     std::cout << "Path: " << getActivePanel()->getCurrentPath().string();
 }

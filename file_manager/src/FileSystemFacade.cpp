@@ -1,6 +1,9 @@
 #include "FileSystemFacade.h"
+#include <filesystem>
 #include <windows.h>
 #include <shellapi.h>
+
+namespace fs = std::filesystem;
 
 bool FileSystemFacade::copyFile(const fs::path& src, const fs::path& dst) {
     try {

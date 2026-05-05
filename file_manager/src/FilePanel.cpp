@@ -109,24 +109,36 @@ bool FilePanel::isSelectedParentDir() const {
     }
     return false;
 }
-
 void FilePanel::display(bool isActive) {
     ConsoleManager* console = ConsoleManager::getInstance();
     
+    // Рисуем путь
     console->setCursorPosition(x, y);
+    
+    // Подсветка пути для активной панели
+    if (isActive) {
+        console->setColor(14);  // Жёлтый
+    }
+    
     std::string pathStr = currentPath.string();
     if (pathStr.length() > (size_t)width - 5) {
         pathStr = "..." + pathStr.substr(pathStr.length() - (width - 8));
     }
     std::cout << " " << pathStr;
     for (int i = (int)pathStr.length(); i < width - 1; i++) std::cout << " ";
+    console->resetColor();
     
+    // Рисуем список файлов
     for (int i = 0; i < height && i < (int)items.size(); i++) {
         console->setCursorPosition(x, y + 1 + i);
         
+        // Подсветка выбранного элемента
         if (isActive && i == selectedIndex) {
-            console->setColor(10);
-            std::cout << ">";
+            console->setColor(10);  // Зелёный
+            std::cout << "▶";
+        } else if (isActive) {
+            console->setColor(11);  // Голубой для обычных строк активной панели
+            std::cout << " ";
         } else {
             console->resetColor();
             std::cout << " ";
@@ -143,16 +155,35 @@ void FilePanel::display(bool isActive) {
             name = name.substr(0, width - 6) + "...";
         }
         
+        // Определяем цвет для имени
+        if (isActive && i == selectedIndex) {
+            console->setColor(10);  // Зелёный для выбранного
+        } else if (isActive) {
+            console->setColor(7);   // Белый для обычных строк активной панели
+        } else {
+            console->setColor(8);   // Тёмно-серый для неактивной панели
+        }
+        
         std::cout << " " << name;
         for (size_t j = name.length(); j < (size_t)width - 2; j++) std::cout << " ";
         
         console->resetColor();
     }
     
+    // Заполняем пустые строки
     for (int i = (int)items.size(); i < height; i++) {
         console->setCursorPosition(x, y + 1 + i);
-        std::cout << " ";
+        
+        if (isActive) {
+            console->setColor(11);
+            std::cout << " ";
+        } else {
+            console->resetColor();
+            std::cout << " ";
+        }
+        
         for (int j = 0; j < width - 2; j++) std::cout << " ";
+        console->resetColor();
     }
 }
 
