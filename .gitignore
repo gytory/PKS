@@ -1,6 +1,5 @@
 build/
-*.exe
-*.exe~
+
 *.out
 *.o
 *.obj
